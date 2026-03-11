@@ -9,8 +9,8 @@
     <script type="text/javascript" src="https://ssl.gstatic.com/trends_nrtr/3720_RC01/embed_loader.js"></script>
     <style>
         :root {
-            --primary-blue: #3182f6;
-            --primary-dark: #1b64da;
+            --primary-blue: #1F5CFF;
+            --primary-dark: #123BA3;
             --bg-color: #f2f4f6;
             --card-bg: #ffffff;
             --text-dark: #191f28;
@@ -51,7 +51,7 @@
         .logo-icon {
             width: 32px;
             height: 32px;
-            background: linear-gradient(135deg, var(--primary-blue), #5c9df8);
+            background: linear-gradient(135deg, var(--primary-blue), #528BFF);
             border-radius: 8px;
             display: flex;
             align-items: center;
@@ -375,9 +375,8 @@
 
         <!-- Middle Area: Google Trends -->
         <div class="card">
-            <div class="card-title"
-                style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
-                <div style="display: flex; align-items: center; gap: 8px;">
+            <div class="card-title" style="display: flex; justify-content: space-between; align-items: center;">
+                <div>
                     실시간 유튜브 검색 트렌드 (Google Trends)
                 </div>
                 <div style="display: flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 500;">
@@ -393,52 +392,75 @@
                 <script type="text/javascript">
                     let mockChartInstance = null;
 
-                    function renderTrends(keywordsStr = "ETF, 연금투자", period = 15) {
+                    async function renderTrends(keywordsStr = "ETF, 연금투자", period = 15) {
                         const container = document.getElementById('trends-container');
 
                         // Parse keywords
                         const keywords = keywordsStr.split(',').map(k => k.trim()).filter(k => k.length > 0);
                         if (keywords.length === 0) keywords.push('주식'); // fallback
 
-                        // Determine time string for Google Trends
-                        let timeStr = "today 1-m";
-                        if (period == 7) timeStr = "now 7-d";
-                        else if (period == 30) timeStr = "today 1-m";
-                        // Google Trends doesn't have a standard '15-d' string, using 1-m as standard fallback for 15 days in this specific widget or we could use custom date range. Let's use 1-m to ensure it renders correctly.
-
-                        // Google Trends iframe prevents loading from 'file://' protocols due to security
-                        if (window.location.protocol === 'file:') {
-                            if (!document.getElementById('mockChart')) {
-                                container.innerHTML = `
-                                <div style="width: 100%; height: 100%; position: relative; padding: 24px; box-sizing: border-box;">
-                                    <div style="position: absolute; top: 12px; right: 24px; background: rgba(0,0,0,0.7); color: white; padding: 6px 12px; border-radius: 6px; font-size: 12px; font-weight: 600; z-index: 10;">
-                                        ⚠️ 로컬 환경(file://) 샘플 데이터 - 실제 웹 서버 구동 시 구글 트렌드가 연동됩니다.
-                                    </div>
-                                    <canvas id="mockChart"></canvas>
+                        // Show loading state
+                        if (!document.getElementById('mockChart')) {
+                            container.innerHTML = `
+                            <div style="width: 100%; height: 100%; position: relative; padding: 24px; box-sizing: border-box;">
+                                <div id="trend-loading" style="position: absolute; top: 12px; right: 24px; background: rgba(0,0,0,0.7); color: white; padding: 6px 12px; border-radius: 6px; font-size: 12px; font-weight: 600; z-index: 10;">
+                                    데이터 불러오는 중...
                                 </div>
+                                <canvas id="mockChart"></canvas>
+                            </div>
                             `;
+                        } else {
+                            document.getElementById('trend-loading').innerText = '데이터 불러오는 중...';
+                        }
+
+                        const ctx = document.getElementById('mockChart').getContext('2d');
+                        
+                        let labels = [];
+                        let datasets = [];
+
+                        const colors = [
+                            { border: '#1F5CFF', bg: 'rgba(31, 92, 255, 0.1)' },
+                            { border: '#191f28', bg: 'rgba(25, 31, 40, 0.05)' },
+                            { border: '#f04452', bg: 'rgba(240, 68, 82, 0.1)' },
+                            { border: '#04c09e', bg: 'rgba(4, 192, 158, 0.1)' },
+                            { border: '#ff9800', bg: 'rgba(255, 152, 0, 0.1)' }
+                        ];
+
+                        try {
+                            if (window.location.protocol !== 'file:') {
+                                // Fetch real data from Vercel backend
+                                const response = await fetch(`/api/trends?keywords=${encodeURIComponent(keywordsStr)}&period=${period}`);
+                                if (!response.ok) throw new Error('Network response was not ok');
+                                
+                                const data = await response.json();
+                                labels = data.labels;
+                                datasets = data.datasets.map((ds, index) => ({
+                                    label: ds.keyword + ' 검색 반응도',
+                                    data: ds.data,
+                                    borderColor: colors[index % colors.length].border,
+                                    backgroundColor: colors[index % colors.length].bg,
+                                    borderWidth: 3,
+                                    tension: 0.4,
+                                    pointRadius: 0,
+                                    pointHoverRadius: 6,
+                                    fill: true
+                                }));
+                                document.getElementById('trend-loading').style.display = 'none';
+                            } else {
+                                throw new Error('Local environment'); // trigger fallback
                             }
-
-                            const ctx = document.getElementById('mockChart').getContext('2d');
-
+                        } catch(error) {
+                            console.log("Using fallback mock data due to error: ", error);
+                            document.getElementById('trend-loading').innerText = '⚠️ 로컬/에러 샘플 데이터';
+                            
                             // Generate mock data based on period
-                            let labels = [];
                             if (period == 7) labels = ['6일 전', '5일 전', '4일 전', '3일 전', '그제', '어제', '오늘'];
                             else if (period == 15) labels = ['14일 전', '12일 전', '10일 전', '8일 전', '6일 전', '4일 전', '2일 전', '오늘'];
                             else labels = ['4주 전', '3주 전', '2주 전', '1주 전', '5일 전', '3일 전', '어제', '오늘'];
 
-                            const colors = [
-                                { border: '#3182f6', bg: 'rgba(49, 130, 246, 0.1)' },
-                                { border: '#191f28', bg: 'rgba(25, 31, 40, 0.05)' },
-                                { border: '#f04452', bg: 'rgba(240, 68, 82, 0.1)' },
-                                { border: '#04c09e', bg: 'rgba(4, 192, 158, 0.1)' },
-                                { border: '#ff9800', bg: 'rgba(255, 152, 0, 0.1)' }
-                            ];
-
-                            const datasets = keywords.slice(0, 5).map((kw, index) => {
+                            datasets = keywords.slice(0, 5).map((kw, index) => {
                                 const data = Array.from({ length: labels.length }, () => Math.floor(Math.random() * 60) + 20 + (index * 5));
-                                // make the latest data point a bit higher to show "trend"
-                                data[data.length - 1] += 20;
+                                data[data.length - 1] += 20; // make the latest data point higher
                                 return {
                                     label: kw + ' 검색 반응도',
                                     data: data,
@@ -449,50 +471,34 @@
                                     fill: true
                                 };
                             });
-
-                            if (mockChartInstance) {
-                                mockChartInstance.destroy();
-                            }
-
-                            mockChartInstance = new Chart(ctx, {
-                                type: 'line',
-                                data: { labels: labels, datasets: datasets },
-                                options: {
-                                    responsive: true,
-                                    maintainAspectRatio: false,
-                                    animation: { duration: 800 },
-                                    plugins: {
-                                        legend: { position: 'bottom', labels: { font: { family: 'Pretendard', size: 13, weight: '600' } } }
-                                    },
-                                    scales: { y: { beginAtZero: true, max: 100 } }
-                                }
-                            });
-                        } else if (typeof trends !== 'undefined') {
-                            // Clear container for new widget
-                            container.innerHTML = '';
-
-                            const comparisonItems = keywords.slice(0, 5).map(kw => ({
-                                "keyword": kw,
-                                "geo": "KR",
-                                "time": timeStr
-                            }));
-
-                            const exploreQuery = `date=${encodeURIComponent(timeStr)}&geo=KR&gprop=youtube&q=${encodeURIComponent(keywords.slice(0, 5).join(','))}`;
-
-                            trends.embed.renderExploreWidgetTo(
-                                container,
-                                "TIMESERIES",
-                                {
-                                    "comparisonItem": comparisonItems,
-                                    "category": 0,
-                                    "property": "youtube"
-                                },
-                                {
-                                    "exploreQuery": exploreQuery,
-                                    "guestPath": "https://trends.google.co.kr:443/trends/embed/"
-                                }
-                            );
                         }
+
+                        if (mockChartInstance) {
+                            mockChartInstance.destroy();
+                        }
+
+                        mockChartInstance = new Chart(ctx, {
+                            type: 'line',
+                            data: { labels: labels, datasets: datasets },
+                            options: {
+                                responsive: true,
+                                maintainAspectRatio: false,
+                                animation: { duration: 800 },
+                                interaction: {
+                                    mode: 'index',
+                                    intersect: false,
+                                },
+                                plugins: {
+                                    legend: { position: 'bottom', labels: { font: { family: 'Pretendard', size: 13, weight: '600' } } }
+                                },
+                                scales: { 
+                                    y: { beginAtZero: true, max: 100 },
+                                    x: { 
+                                        ticks: { maxTicksLimit: 15 }
+                                    }
+                                }
+                            }
+                        });
                     }
 
                     window.addEventListener('load', () => renderTrends());

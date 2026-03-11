@@ -1,0 +1,8 @@
+{
+  "name": "youtube-fin-trend-dashboard",
+  "version": "1.0.0",
+  "description": "Youtube Fin-Trend Dashboard",
+  "dependencies": {
+    "google-trends-api": "^4.9.2"
+  }
+}
