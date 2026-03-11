@@ -77,7 +77,7 @@
         .card {
             background-color: var(--card-bg);
             border-radius: 16px;
-            padding: 24px;
+            padding: 24px 32px;
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
             margin-bottom: 24px;
             border: 1px solid var(--border-color);
@@ -413,9 +413,9 @@
         </div>
 
         <!-- Middle Area: Google Trends -->
-        <div class="card">
+        <div class="card" style="position: relative; z-index: 1;">
             <div class="card-title" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-                <span style="display: flex; align-items: center;">실시간 유튜브 검색 트렌드 (Google Trends)</span>
+                <div style="display: flex; align-items: center;">실시간 유튜브 검색 트렌드 (Google Trends)</div>
                 <div style="display: flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 500;">
                     <span class="filter-label">비교 키워드 설정</span>
                     <input type="text" id="trends-keywords" class="filter-select"
@@ -738,9 +738,13 @@
             }
         }
 
-        // Initialize with Long-form data
+        // Initialize
         window.onload = () => {
-            renderTable('longform');
+            if (window.location.protocol === 'file:') {
+                renderTable('longform');
+            } else {
+                refreshData(); 
+            }
         };
     </script>
 
