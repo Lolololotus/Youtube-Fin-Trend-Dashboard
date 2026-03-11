@@ -117,6 +117,7 @@
         /* Middle Area: Filters */
         .filters-container {
             display: flex;
+            flex-wrap: wrap; /* allow wrapping for date picker */
             gap: 16px;
             align-items: center;
             background-color: #f9fafb;
@@ -413,8 +414,8 @@
 
         <!-- Middle Area: Google Trends -->
         <div class="card">
-            <div class="card-title" style="display: flex; justify-content: space-between; align-items: center;">
-                실시간 유튜브 검색 트렌드 (Google Trends)
+            <div class="card-title" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                <span style="display: flex; align-items: center;">실시간 유튜브 검색 트렌드 (Google Trends)</span>
                 <div style="display: flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 500;">
                     <span class="filter-label">비교 키워드 설정</span>
                     <input type="text" id="trends-keywords" class="filter-select"
