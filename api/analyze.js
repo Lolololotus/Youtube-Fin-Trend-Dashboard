@@ -48,8 +48,12 @@ export default async function handler(request) {
 
 실제 최근 한국 유튜브 주식/경제/재테크 트렌드를 100% 반영하여 전문가적인 식견의 리포트를 작성해 주세요. JSON 외의 말(설명 등)은 절대 출력하지 마세요.`;
 
-    // USER provided Gemini API key
-    const apiKey = "AIzaSyC2cyO5f-OKXyFnoFjA6kZRZOPjiVBqAio"; 
+    // Read API key from secure Vercel environment variables to prevent Github leaks
+    const apiKey = process.env.GEMINI_API_KEY; 
+    
+    if (!apiKey) {
+      throw new Error("API Key configuration missing on server.");
+    }
 
     const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`, {
       method: "POST",
