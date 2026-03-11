@@ -157,6 +157,39 @@
             border-color: var(--primary-blue);
         }
 
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background-color: white;
+            padding: 0 16px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            height: 40px;
+        }
+
+        .checkbox-label {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 14px;
+            color: var(--text-dark);
+            cursor: pointer;
+        }
+
+        .checkbox-label input[type="checkbox"] {
+            accent-color: var(--primary-blue);
+            width: 16px;
+            height: 16px;
+            cursor: pointer;
+        }
+
+        .custom-date-group {
+            display: none;
+            align-items: center;
+            gap: 8px;
+        }
+
         .btn-apply {
             padding: 10px 24px;
             background-color: var(--text-dark);
@@ -354,20 +387,25 @@
             <div class="filters-container">
                 <div class="filter-group">
                     <span class="filter-label">기간 설정</span>
-                    <select class="filter-select" id="filter-period">
+                    <select class="filter-select" id="filter-period" onchange="toggleDateInputs()">
                         <option value="7">최근 7일</option>
                         <option value="15" selected>최근 15일</option>
                         <option value="30">최근 30일</option>
+                        <option value="custom">자유 선택</option>
                     </select>
+                    <div class="custom-date-group" id="custom-dates">
+                        <input type="date" id="date-start" class="filter-select" style="padding-right: 12px; background-image: none;">
+                        <span>~</span>
+                        <input type="date" id="date-end" class="filter-select" style="padding-right: 12px; background-image: none;">
+                    </div>
                 </div>
                 <div class="filter-group">
                     <span class="filter-label">타겟 설정</span>
-                    <select class="filter-select" id="filter-target">
-                        <option value="all" selected>203040 통합</option>
-                        <option value="20">20대 특화</option>
-                        <option value="30">30대 특화</option>
-                        <option value="40">40대 특화</option>
-                    </select>
+                    <div class="checkbox-group" id="filter-target">
+                        <label class="checkbox-label"><input type="checkbox" value="20" checked> 20대</label>
+                        <label class="checkbox-label"><input type="checkbox" value="30" checked> 30대</label>
+                        <label class="checkbox-label"><input type="checkbox" value="40" checked> 40대</label>
+                    </div>
                 </div>
                 <button class="btn-apply" onclick="refreshData()">데이터 업데이트</button>
             </div>
@@ -414,7 +452,7 @@
                         }
 
                         const ctx = document.getElementById('mockChart').getContext('2d');
-                        
+
                         let labels = [];
                         let datasets = [];
 
@@ -431,7 +469,7 @@
                                 // Fetch real data from Vercel backend
                                 const response = await fetch(`/api/trends?keywords=${encodeURIComponent(keywordsStr)}&period=${period}`);
                                 if (!response.ok) throw new Error('Network response was not ok');
-                                
+
                                 const data = await response.json();
                                 labels = data.labels;
                                 datasets = data.datasets.map((ds, index) => ({
@@ -449,10 +487,10 @@
                             } else {
                                 throw new Error('Local environment'); // trigger fallback
                             }
-                        } catch(error) {
+                        } catch (error) {
                             console.log("Using fallback mock data due to error: ", error);
                             document.getElementById('trend-loading').innerText = '⚠️ 로컬/에러 샘플 데이터';
-                            
+
                             // Generate mock data based on period
                             if (period == 7) labels = ['6일 전', '5일 전', '4일 전', '3일 전', '그제', '어제', '오늘'];
                             else if (period == 15) labels = ['14일 전', '12일 전', '10일 전', '8일 전', '6일 전', '4일 전', '2일 전', '오늘'];
@@ -491,9 +529,9 @@
                                 plugins: {
                                     legend: { position: 'bottom', labels: { font: { family: 'Pretendard', size: 13, weight: '600' } } }
                                 },
-                                scales: { 
+                                scales: {
                                     y: { beginAtZero: true, max: 100 },
-                                    x: { 
+                                    x: {
                                         ticks: { maxTicksLimit: 15 }
                                     }
                                 }
@@ -643,15 +681,35 @@
 
             // Refresh Trends Chart
             const keywordsStr = document.getElementById('trends-keywords').value;
-            const period = document.getElementById('filter-period').value;
-            const target = document.getElementById('filter-target').value;
+            let period = document.getElementById('filter-period').value;
+
+            if (period === 'custom') {
+                const start = document.getElementById('date-start').value;
+                const end = document.getElementById('date-end').value;
+                if (!start || !end) {
+                    alert('시작일과 종료일을 자유 선택 하려면 모두 지정해주세요.');
+                    btn.innerText = originalText;
+                    btn.style.opacity = '1';
+                    btn.disabled = false;
+                    return;
+                }
+                const diffTime = Math.abs(new Date(end) - new Date(start));
+                const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+                period = diffDays === 0 ? 1 : diffDays; // avoid 0 period
+            }
+            
+            // Get selected targets
+            const targetCheckboxes = document.querySelectorAll('#filter-target input[type="checkbox"]:checked');
+            const targets = Array.from(targetCheckboxes).map(cb => cb.value).join(',');
+            const targetStr = targets.length > 0 ? targets : 'all'; // fallback if none selected
+
             renderTrends(keywordsStr, period);
 
             try {
                 if (window.location.protocol !== 'file:') {
-                    const response = await fetch(`/api/analyze?keywords=${encodeURIComponent(keywordsStr)}&period=${period}&target=${target}`);
+                    const response = await fetch(`/api/analyze?keywords=${encodeURIComponent(keywordsStr)}&period=${period}&target=${encodeURIComponent(targetStr)}`);
                     if (!response.ok) throw new Error('API 응답 오류');
-                    
+
                     const newData = await response.json();
                     if (newData && newData.longform && newData.shorts) {
                         engineData = newData; // Update global data
@@ -665,7 +723,7 @@
                 const activeTab = document.querySelector('.tab.active');
                 const type = activeTab.innerText.includes('동영상') ? 'longform' : 'shorts';
                 renderTable(type);
-                
+
                 if (window.location.protocol !== 'file:') {
                     // Automatically fetched and updated
                 } else {

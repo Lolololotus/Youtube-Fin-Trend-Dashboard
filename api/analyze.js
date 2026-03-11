@@ -16,7 +16,7 @@ export default async function handler(request) {
 - 기간: 최근 ${period}일 동안 흥행한 지표
 - 타겟 연령층: ${target === 'all' ? '203040 통합' : target + '대 특화'}
 
-가장 트렌디하고 분석력이 돋보이는 [Long-form 동영상] 3개 테마, [Shorts 쇼츠] 2개 테마를 도출해서 아래 JSON 구조에 맞춰 한글로 응답해주세요. 반드시 형태를 맞춰주세요.
+가장 트렌디하고 분석력이 돋보이는 [Long-form 동영상] 5개 테마, [Shorts 쇼츠] 5개 테마를 도출해서 아래 JSON 구조에 맞춰 한글로 응답해주세요. 반드시 형태를 맞춰주세요.
 구조:
 {
   "longform": [
