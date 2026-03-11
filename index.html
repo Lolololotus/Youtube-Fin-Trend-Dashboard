@@ -475,7 +475,7 @@
                                 const data = await response.json();
                                 labels = data.labels;
                                 datasets = data.datasets.map((ds, index) => ({
-                                    label: ds.keyword + ' 유튜브 검색 수',
+                                    label: ds.keyword + ' 상대적 관심도(%)',
                                     data: ds.data,
                                     borderColor: colors[index % colors.length].border,
                                     backgroundColor: colors[index % colors.length].bg,
@@ -498,14 +498,15 @@
                             else if (period == 15) labels = ['14일 전', '12일 전', '10일 전', '8일 전', '6일 전', '4일 전', '2일 전', '오늘'];
                             else labels = ['4주 전', '3주 전', '2주 전', '1주 전', '5일 전', '3일 전', '어제', '오늘'];
 
-                            datasets = keywords.slice(0, 5).map((kw, index) => {
-                                const data = Array.from({ length: labels.length }, () => Math.floor(Math.random() * 60) + 20 + (index * 5));
-                                data[data.length - 1] += 20; // make the latest data point higher
+                            datasets = keywords.map((kw, idx) => {
+                                const basePoints = Array(labels.length).fill(0).map(() => Math.floor(Math.random() * 80) + 20);
+                                if (idx === 0) basePoints[basePoints.length - 2] = 100; // Fake peak
+
                                 return {
-                                    label: kw + ' 유튜브 검색 수',
-                                    data: data,
-                                    borderColor: colors[index % colors.length].border,
-                                    backgroundColor: colors[index % colors.length].bg,
+                                    label: kw + ' 상대적 관심도(%)',
+                                    data: basePoints,
+                                    borderColor: colors[idx % colors.length].border,
+                                    backgroundColor: colors[idx % colors.length].bg,
                                     borderWidth: 3,
                                     tension: 0.4,
                                     fill: true
