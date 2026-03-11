@@ -531,8 +531,8 @@
     </div>
 
     <script>
-        // Anti-gravity Engine Mock Data
-        const engineData = {
+        // Anti-gravity Engine Data
+        let engineData = {
             longform: [
                 {
                     type: "글로벌 매크로 & 미주 투자",
@@ -628,23 +628,51 @@
             renderTable(type);
         }
 
-        function refreshData() {
+        async function refreshData() {
             const btn = document.querySelector('.btn-apply');
             const originalText = btn.innerText;
-            btn.innerText = '엔진 데이터 수집 중...';
+            btn.innerText = '엔진 데이터 분석/수집 중...';
             btn.style.opacity = '0.7';
+            btn.disabled = true;
 
             // Refresh Trends Chart
             const keywordsStr = document.getElementById('trends-keywords').value;
             const period = document.getElementById('filter-period').value;
+            const target = document.getElementById('filter-target').value;
             renderTrends(keywordsStr, period);
 
-            setTimeout(() => {
+            try {
+                if (window.location.protocol !== 'file:') {
+                    const response = await fetch(`/api/analyze?keywords=${encodeURIComponent(keywordsStr)}&period=${period}&target=${target}`);
+                    if (!response.ok) throw new Error('API 응답 오류');
+                    
+                    const newData = await response.json();
+                    if (newData && newData.longform && newData.shorts) {
+                        engineData = newData; // Update global data
+                    }
+                } else {
+                    // Local environment fallback: just wait a bit (mock data remains)
+                    await new Promise(resolve => setTimeout(resolve, 1500));
+                }
+
+                // Re-render currently active tab
+                const activeTab = document.querySelector('.tab.active');
+                const type = activeTab.innerText.includes('동영상') ? 'longform' : 'shorts';
+                renderTable(type);
+                
+                if (window.location.protocol !== 'file:') {
+                    // Automatically fetched and updated
+                } else {
+                    alert('로컬 환경입니다. (API 호출은 웹 서버에서만 동작합니다)');
+                }
+            } catch (error) {
+                console.error("데이터 수집 실패:", error);
+                alert("백엔드 분석 중 오류가 발생했습니다. Vercel 배포 환경을 확인해주세요.");
+            } finally {
                 btn.innerText = originalText;
                 btn.style.opacity = '1';
-                alert('Anti-gravity 엔진 최신 데이터 동기화가 완료되었습니다.');
-                // Here you would normally update the table data based on the new filters
-            }, 800);
+                btn.disabled = false;
+            }
         }
 
         // Initialize with Long-form data
