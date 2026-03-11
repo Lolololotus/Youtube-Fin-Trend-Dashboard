@@ -408,7 +408,7 @@
                         <label class="checkbox-label"><input type="checkbox" value="40" checked> 40대</label>
                     </div>
                 </div>
-                <button class="btn-apply" onclick="refreshData()">데이터 업데이트</button>
+                <button class="btn-apply" onclick="refreshData(false)">데이터 업데이트</button>
             </div>
         </div>
 
@@ -691,7 +691,7 @@
             }
         }
 
-        async function refreshData() {
+        async function refreshData(isAuto = true) {
             const btn = document.querySelector('.btn-apply');
             const originalText = btn.innerText;
             btn.innerText = '엔진 데이터 분석/수집 중...';
@@ -756,9 +756,22 @@
                 }
             } catch (error) {
                 console.error("데이터 수집 실패:", error);
-                alert(`백엔드 분석 중 오류가 발생했습니다.\n\n상세 사유: ${error.message}\n\n1분 뒤에 다시 시도해주시거나 Vercel 접속 로그를 확인해주세요.`);
+                
+                // Fallback to render existing mock data so table is not empty
+                const activeTab = document.querySelector('.tab.active');
+                const type = activeTab.innerText.includes('동영상') ? 'longform' : 'shorts';
+                renderTable(type);
+
+                // Update badge to indicate error state
+                document.querySelector('.engine-badge').innerText = '⚠️ API 허용량 제한 (샘플 데이터)';
+                document.querySelector('.engine-badge').style.backgroundColor = 'rgba(240, 68, 82, 0.1)';
+                document.querySelector('.engine-badge').style.color = '#f04452';
+
+                if (!isAuto) {
+                    alert(`백엔드 분석 중 오류가 발생했습니다.\n\n상세 사유: ${error.message}\n\n잠시 후 다시 시도해주세요.`);
+                }
             } finally {
-                btn.innerText = originalText;
+                btn.innerText = '데이터 업데이트';
                 btn.style.opacity = '1';
                 btn.disabled = false;
             }
@@ -769,7 +782,7 @@
             if (window.location.protocol === 'file:') {
                 renderTable('longform');
             } else {
-                refreshData(); 
+                refreshData(true); 
             }
         };
     </script>
