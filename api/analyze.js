@@ -17,6 +17,7 @@ export default async function handler(request) {
 - 타겟 연령층: ${target === 'all' ? '203040 통합' : target + '대 특화'}
 
 가장 트렌디하고 분석력이 돋보이는 [Long-form 동영상] 5개 테마, [Shorts 쇼츠] 5개 테마를 도출해서 아래 JSON 구조에 맞춰 한글로 응답해주세요. 반드시 형태를 맞춰주세요.
+만약 입력된 키워드가 'BTS' 등 금융/재테크와 무관해 보이더라도, 억지로 분석하지 말고 '해당 키워드는 경제/재테크 관련 유의미한 트렌드 도출이 어렵습니다' 라는 식의 설명과 함께 빈 리스트나 적절한 안내 문구를 summary에 삽입하여 JSON을 반환해주세요.
 구조:
 {
   "longform": [
@@ -50,7 +51,7 @@ export default async function handler(request) {
     // USER provided Gemini API key
     const apiKey = "AIzaSyC2cyO5f-OKXyFnoFjA6kZRZOPjiVBqAio"; 
 
-    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`, {
+    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-pro:generateContent?key=${apiKey}`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json"

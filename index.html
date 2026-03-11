@@ -381,7 +381,7 @@
                     <div class="subtitle">경제/재테크 유튜브 빅데이터 분석 플랫폼</div>
                 </div>
             </div>
-            <img src="logo.png" alt="삼성자산운용 X 3PRO" style="height: 28px; object-fit: contain;">
+            <div style="font-size: 20px; font-weight: 800; color: #8b95a1; letter-spacing: 1px;">Lotus</div>
         </header>
         <!-- Top Area: Filters -->
         <div class="card">
@@ -414,12 +414,12 @@
 
         <!-- Middle Area: Google Trends -->
         <div class="card" style="position: relative; z-index: 1;">
-            <div class="card-title" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+            <div class="card-title">
                 <div style="display: flex; flex-direction: column;">
                     <span style="display: flex; align-items: center;">실시간 유튜브 검색 트렌드 (Google Trends)</span>
                     <span style="font-size: 13px; color: #8b95a1; font-weight: 400; margin-top: 4px;">* 구글 트렌드 데이터는 절대 검색량이 아닌 특정 기간 내 최고점(100) 대비 상대적 관심도 수치입니다.</span>
                 </div>
-                <div style="display: flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 500;">
+                <div style="display: flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 500; margin-left: auto;">
                     <span class="filter-label">비교 키워드 설정</span>
                     <input type="text" id="trends-keywords" class="filter-select"
                         style="width: 200px; padding: 10px 16px; background-image: none;" value="ETF, 연금투자"
@@ -673,6 +673,22 @@
 
             // Render data
             renderTable(type);
+        }
+
+        function toggleDateInputs() {
+            const period = document.getElementById('filter-period').value;
+            const customDates = document.getElementById('custom-dates');
+            if (period === 'custom') {
+                customDates.style.display = 'flex';
+                // Set default to today
+                const today = new Date().toISOString().split('T')[0];
+                if (!document.getElementById('date-end').value) {
+                    document.getElementById('date-end').value = today;
+                    document.getElementById('date-start').value = today;
+                }
+            } else {
+                customDates.style.display = 'none';
+            }
         }
 
         async function refreshData() {
