@@ -68,7 +68,15 @@ export default async function handler(request) {
     }
 
     const data = await response.json();
-    const text = data.candidates[0].content.parts[0].text;
+    if (!data.candidates || data.candidates.length === 0) {
+        throw new Error('Gemini API returned no candidates');
+    }
+
+    let text = data.candidates[0].content.parts[0].text;
+    
+    // Clean up potential markdown blocks if Gemini ignores response_mime_type
+    text = text.replace(/^```json/i, '').replace(/^```/i, '').replace(/```$/i, '').trim();
+
     const parsed = JSON.parse(text);
 
     return new Response(JSON.stringify(parsed), {
@@ -76,7 +84,8 @@ export default async function handler(request) {
       headers: { 'Content-Type': 'application/json' }
     });
   } catch (error) {
-    return new Response(JSON.stringify({ error: error.message }), { 
+    console.error("Gemini Edge API Error:", error);
+    return new Response(JSON.stringify({ error: error.message || 'Unknown error occurred' }), { 
         status: 500,
         headers: { 'Content-Type': 'application/json' } 
     });

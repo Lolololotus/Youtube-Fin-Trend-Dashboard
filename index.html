@@ -415,7 +415,10 @@
         <!-- Middle Area: Google Trends -->
         <div class="card" style="position: relative; z-index: 1;">
             <div class="card-title" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-                <div style="display: flex; align-items: center;">실시간 유튜브 검색 트렌드 (Google Trends)</div>
+                <div style="display: flex; flex-direction: column;">
+                    <span style="display: flex; align-items: center;">실시간 유튜브 검색 트렌드 (Google Trends)</span>
+                    <span style="font-size: 13px; color: #8b95a1; font-weight: 400; margin-top: 4px;">* 구글 트렌드 데이터는 절대 검색량이 아닌 특정 기간 내 최고점(100) 대비 상대적 관심도 수치입니다.</span>
+                </div>
                 <div style="display: flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 500;">
                     <span class="filter-label">비교 키워드 설정</span>
                     <input type="text" id="trends-keywords" class="filter-select"
@@ -707,11 +710,17 @@
             try {
                 if (window.location.protocol !== 'file:') {
                     const response = await fetch(`/api/analyze?keywords=${encodeURIComponent(keywordsStr)}&period=${period}&target=${encodeURIComponent(targetStr)}`);
-                    if (!response.ok) throw new Error('API 응답 오류');
+                    
+                    if (!response.ok) {
+                        const errData = await response.json().catch(() => ({}));
+                        throw new Error(errData.error || `API 응답 오류 (${response.status})`);
+                    }
 
                     const newData = await response.json();
                     if (newData && newData.longform && newData.shorts) {
                         engineData = newData; // Update global data
+                    } else {
+                        throw new Error('데이터 포맷이 일치하지 않습니다.');
                     }
                 } else {
                     // Local environment fallback: just wait a bit (mock data remains)
@@ -730,7 +739,7 @@
                 }
             } catch (error) {
                 console.error("데이터 수집 실패:", error);
-                alert("백엔드 분석 중 오류가 발생했습니다. Vercel 배포 환경을 확인해주세요.");
+                alert(`백엔드 분석 중 오류가 발생했습니다.\n\n상세 사유: ${error.message}\n\n1분 뒤에 다시 시도해주시거나 Vercel 접속 로그를 확인해주세요.`);
             } finally {
                 btn.innerText = originalText;
                 btn.style.opacity = '1';
