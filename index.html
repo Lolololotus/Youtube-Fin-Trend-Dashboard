@@ -435,7 +435,7 @@
                                 const data = await response.json();
                                 labels = data.labels;
                                 datasets = data.datasets.map((ds, index) => ({
-                                    label: ds.keyword + ' 검색 반응도',
+                                    label: ds.keyword + ' 유튜브 검색 수',
                                     data: ds.data,
                                     borderColor: colors[index % colors.length].border,
                                     backgroundColor: colors[index % colors.length].bg,
@@ -462,7 +462,7 @@
                                 const data = Array.from({ length: labels.length }, () => Math.floor(Math.random() * 60) + 20 + (index * 5));
                                 data[data.length - 1] += 20; // make the latest data point higher
                                 return {
-                                    label: kw + ' 검색 반응도',
+                                    label: kw + ' 유튜브 검색 수',
                                     data: data,
                                     borderColor: colors[index % colors.length].border,
                                     backgroundColor: colors[index % colors.length].bg,
