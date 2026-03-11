@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>콘텐츠 개선 전략 액션 플랜</title>
+    <link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-blue: #3182f6;
+            --light-blue-bg: #eaf1fa;
+            --text-dark: #191f28;
+            --text-gray: #8b95a1;
+            --text-light-gray: #b0b8c1;
+            --bg-gray: #f2f4f6;
+            --border-color: #e5e8eb;
+        }
+
+        body {
+            font-family: 'Pretendard', sans-serif;
+            margin: 0;
+            padding: 40px;
+            background-color: #f8f9fa;
+            color: var(--text-dark);
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background-color: #ffffff;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+        }
+
+        /* Header */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 32px;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .header-blue-bar {
+            width: 8px;
+            height: 32px;
+            background-color: var(--primary-blue);
+        }
+
+        .header-number {
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--primary-blue);
+        }
+
+        .header-title {
+            font-size: 28px;
+            font-weight: 700;
+        }
+
+        .header-divider {
+            color: var(--text-light-gray);
+            font-weight: 300;
+            margin: 0 4px;
+        }
+
+        .header-subtitle {
+            font-size: 18px;
+            color: var(--text-gray);
+            font-weight: 400;
+        }
+
+        .header-logo {
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--text-light-gray);
+            letter-spacing: -0.5px;
+            display: flex;
+            align-items: center;
+        }
+
+        .header-logo span {
+            font-weight: 300;
+            font-size: 18px;
+            margin: 0 8px;
+            color: #d1d5db;
+        }
+
+        /* Banner Box */
+        .banner-box {
+            background-color: var(--light-blue-bg);
+            border-radius: 12px;
+            padding: 32px 40px;
+            margin-bottom: 24px;
+        }
+
+        .banner-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--primary-blue);
+            margin-bottom: 16px;
+        }
+
+        .banner-text {
+            font-size: 16px;
+            line-height: 1.6;
+            color: var(--text-dark);
+            margin: 0;
+            font-weight: 500;
+        }
+
+        .banner-text span {
+            display: block;
+            margin-top: 4px;
+        }
+
+        /* Tabs */
+        .tabs {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+
+        .tab {
+            flex: 1;
+            padding: 16px 0;
+            text-align: center;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .tab-gray {
+            background-color: var(--bg-gray);
+            color: var(--text-light-gray);
+        }
+
+        .tab-gray:hover {
+            background-color: #e5e8eb;
+        }
+
+        .tab-blue {
+            background-color: var(--primary-blue);
+            color: #ffffff;
+            box-shadow: 0 4px 12px rgba(49, 130, 246, 0.2);
+        }
+
+        /* Cards Section */
+        .cards-container {
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 32px;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 32px;
+        }
+
+        .card {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .card-image {
+            width: 100%;
+            height: 180px;
+            background-color: var(--bg-gray);
+            border-radius: 8px;
+            margin-bottom: 24px;
+            object-fit: cover;
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 16px;
+        }
+
+        .card-blue-bar {
+            width: 4px;
+            height: 18px;
+            background-color: var(--primary-blue);
+        }
+
+        .card-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--text-dark);
+        }
+
+        .card-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .card-list li {
+            position: relative;
+            padding-left: 14px;
+            font-size: 14px;
+            color: #4e5968;
+            line-height: 1.6;
+            margin-bottom: 8px;
+            word-break: keep-all;
+            letter-spacing: -0.3px;
+        }
+
+        .card-list li::before {
+            content: "•";
+            position: absolute;
+            left: 0;
+            color: #4e5968;
+            transform: scale(0.8);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-left">
+                <div class="header-blue-bar"></div>
+                <div class="header-number">04</div>
+                <div class="header-title">'26년 콘텐츠 개선 전략 액션 플랜</div>
+                <div class="header-divider">|</div>
+                <div class="header-subtitle">상세 제안 내용</div>
+            </div>
+            <div class="header-logo">
+                삼성자산운용 <span>X</span> 3PRO
+            </div>
+        </header>
+
+        <!-- Banner Box -->
+        <div class="banner-box">
+            <div class="banner-title">AI 빅데이터 기반 트렌드 분석과 공동 마케팅을 통한 채널 시너지 극대화</div>
+            <p class="banner-text">
+                삼프로TV는 AI 빅데이터 분석을 통해 투자자 관심 트렌드와 핵심 키워드를 선제적으로 도출하고,
+                <span>삼성자산운용과 공동 기획·제작 및 마케팅을 통해 유튜브 채널의 도달→신뢰→성장 구조를 체계적으로 강화합니다.</span>
+            </p>
+        </div>
+
+        <!-- Tabs -->
+        <div class="tabs">
+            <div class="tab tab-gray">콘텐츠 기획 및 제작</div>
+            <div class="tab tab-blue">채널 운영 및 공동 마케팅</div>
+            <div class="tab tab-gray">핵심 전략 요약</div>
+        </div>
+
+        <!-- Cards -->
+        <div class="cards-container">
+            <!-- Card 1 -->
+            <div class="card">
+                <img src="https://images.unsplash.com/photo-1590845947698-8924d7409b56?auto=format&fit=crop&q=80&w=400&h=200" alt="공동 제작 예시 이미지" class="card-image">
+                <div class="card-header">
+                    <div class="card-blue-bar"></div>
+                    <div class="card-title">공동 제작 및 동시 업로드</div>
+                </div>
+                <ul class="card-list">
+                    <li>삼성자산운용과 삼프로TV 채널에 콘텐츠 동시 업로드</li>
+                    <li>초기 노출 극대화를 통한 잠재 시청자 도달 확대</li>
+                    <li>채널 간 상호 트래픽 유입을 통한 시너지 효과 창출</li>
+                </ul>
+            </div>
+
+            <!-- Card 2 -->
+            <div class="card">
+                <img src="https://images.unsplash.com/photo-1626226105820-25bc3bdcc435?auto=format&fit=crop&q=80&w=400&h=200" alt="사전 마케팅 예시 이미지" class="card-image">
+                <div class="card-header">
+                    <div class="card-blue-bar"></div>
+                    <div class="card-title">사전 마케팅 및 웨비나 연계</div>
+                </div>
+                <ul class="card-list">
+                    <li>삼프로TV 채널을 활용한 사전 홍보로 콘텐츠 기대감 조성</li>
+                    <li>삼성자산운용 웨비나·라이브 콘텐츠에 전문가 및 인플루언서 섭외</li>
+                    <li>실시간 참여형 콘텐츠를 통해 시청자 몰입도 및 신뢰도 강화</li>
+                </ul>
+            </div>
+
+            <!-- Card 3 -->
+            <div class="card">
+                <img src="https://images.unsplash.com/photo-1591115765373-5207764f72e7?auto=format&fit=crop&q=80&w=400&h=200" alt="공동 홍보 예시 이미지" class="card-image">
+                <div class="card-header">
+                    <div class="card-blue-bar"></div>
+                    <div class="card-title">전략적 공동 홍보 및 이슈 메이킹</div>
+                </div>
+                <ul class="card-list">
+                    <li>시장 주요 이슈에 맞춘 공동 콘텐츠 제작 및 확산</li>
+                    <li>공동 마케팅, 공동 이벤트 전개를 통한 화제성 및 주목도 제고</li>
+                    <li>단기 조회수 확보를 넘어 장기 채널 자산 축적을 목표로 운영</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

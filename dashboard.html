@@ -1,0 +1,658 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fin-Trend Radar | Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css" rel="stylesheet">
+    <script type="text/javascript" src="https://ssl.gstatic.com/trends_nrtr/3720_RC01/embed_loader.js"></script>
+    <style>
+        :root {
+            --primary-blue: #3182f6;
+            --primary-dark: #1b64da;
+            --bg-color: #f2f4f6;
+            --card-bg: #ffffff;
+            --text-dark: #191f28;
+            --text-gray: #4e5968;
+            --text-light: #8b95a1;
+            --border-color: #e5e8eb;
+        }
+
+        body {
+            font-family: 'Pretendard', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: var(--bg-color);
+            color: var(--text-dark);
+            min-height: 100vh;
+        }
+
+        .dashboard-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 32px;
+        }
+
+        /* Header */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 32px;
+        }
+
+        .logo-area {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo-icon {
+            width: 32px;
+            height: 32px;
+            background: linear-gradient(135deg, var(--primary-blue), #5c9df8);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 18px;
+        }
+
+        .title {
+            font-size: 24px;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+        }
+
+        .subtitle {
+            font-size: 14px;
+            color: var(--text-light);
+            font-weight: 500;
+        }
+
+        /* Card Base */
+        .card {
+            background-color: var(--card-bg);
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+            margin-bottom: 24px;
+            border: 1px solid var(--border-color);
+        }
+
+        .card-title {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .card-title::before {
+            content: '';
+            display: inline-block;
+            width: 4px;
+            height: 16px;
+            background-color: var(--primary-blue);
+            border-radius: 2px;
+        }
+
+        /* Top Area: Google Trends */
+        .trends-wrapper {
+            width: 100%;
+            height: 400px;
+            border-radius: 12px;
+            overflow: hidden;
+            background-color: #fafbfc;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px dashed var(--border-color);
+        }
+
+        /* Middle Area: Filters */
+        .filters-container {
+            display: flex;
+            gap: 16px;
+            align-items: center;
+            background-color: #f9fafb;
+            padding: 16px 24px;
+            border-radius: 12px;
+        }
+
+        .filter-group {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .filter-label {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-gray);
+        }
+
+        .filter-select {
+            appearance: none;
+            padding: 10px 36px 10px 16px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 14px;
+            font-family: inherit;
+            color: var(--text-dark);
+            background-color: white;
+            background-image: url("data:image/svg+xml,%3Csvg width='12' height='12' viewBox='0 0 12 12' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M2.5 4.5L6 8L9.5 4.5' stroke='%238B95A1' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 14px center;
+            cursor: pointer;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .filter-select:focus {
+            border-color: var(--primary-blue);
+        }
+
+        .btn-apply {
+            padding: 10px 24px;
+            background-color: var(--text-dark);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            margin-left: auto;
+        }
+
+        .btn-apply:hover {
+            background-color: #000000;
+        }
+
+        /* Bottom Area: Report */
+        .tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 20px;
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 2px;
+        }
+
+        .tab {
+            padding: 12px 24px;
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text-light);
+            cursor: pointer;
+            position: relative;
+            transition: color 0.2s;
+            background: none;
+            border: none;
+        }
+
+        .tab.active {
+            color: var(--primary-blue);
+        }
+
+        .tab.active::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background-color: var(--primary-blue);
+            border-radius: 4px 4px 0 0;
+        }
+
+        .data-table-wrapper {
+            overflow-x: auto;
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+        }
+
+        .data-table th,
+        .data-table td {
+            padding: 16px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .data-table th {
+            background-color: #f9fafb;
+            font-weight: 600;
+            color: var(--text-gray);
+            font-size: 14px;
+            white-space: nowrap;
+        }
+
+        .data-table td {
+            font-size: 15px;
+            line-height: 1.6;
+            vertical-align: top;
+        }
+
+        .col-type {
+            font-weight: 700;
+            color: var(--primary-dark);
+            width: 15%;
+        }
+
+        .col-summary {
+            width: 35%;
+        }
+
+        .col-keywords {
+            width: 30%;
+        }
+
+        .keyword-tag {
+            display: inline-block;
+            padding: 4px 8px;
+            background-color: #eaf1fa;
+            color: var(--primary-blue);
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 600;
+            margin: 0 4px 4px 0;
+        }
+
+        .col-channel {
+            width: 20%;
+        }
+
+        .channel-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            color: var(--text-dark);
+            text-decoration: none;
+            font-weight: 600;
+            padding: 6px 12px;
+            background-color: var(--bg-color);
+            border-radius: 20px;
+            font-size: 13px;
+            margin-bottom: 8px;
+            transition: background-color 0.2s;
+        }
+
+        .channel-link:hover {
+            background-color: #e5e8eb;
+        }
+
+        .channel-link::before {
+            content: '▶';
+            color: #ff0000;
+            font-size: 10px;
+        }
+
+        .engine-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 10px;
+            background: linear-gradient(90deg, #1a1a2e, #16213e);
+            color: #4ade80;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            margin-left: 12px;
+            vertical-align: middle;
+        }
+
+        .engine-badge::before {
+            content: '';
+            display: inline-block;
+            width: 6px;
+            height: 6px;
+            background-color: #4ade80;
+            border-radius: 50%;
+            box-shadow: 0 0 8px #4ade80;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.4;
+            }
+
+            100% {
+                opacity: 1;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="dashboard-container">
+        <header class="header">
+            <div class="logo-area">
+                <div class="logo-icon">F</div>
+                <div>
+                    <div class="title">Youtube Fin-Trend Dashboard</div>
+                    <div class="subtitle">경제/재테크 유튜브 빅데이터 분석 플랫폼</div>
+                </div>
+            </div>
+            <img src="logo.png" alt="삼성자산운용 X 3PRO" style="height: 28px; object-fit: contain;">
+        </header>
+        <!-- Top Area: Filters -->
+        <div class="card">
+            <div class="filters-container">
+                <div class="filter-group">
+                    <span class="filter-label">기간 설정</span>
+                    <select class="filter-select" id="filter-period">
+                        <option value="7">최근 7일</option>
+                        <option value="15" selected>최근 15일</option>
+                        <option value="30">최근 30일</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <span class="filter-label">타겟 설정</span>
+                    <select class="filter-select" id="filter-target">
+                        <option value="all" selected>203040 통합</option>
+                        <option value="20">20대 특화</option>
+                        <option value="30">30대 특화</option>
+                        <option value="40">40대 특화</option>
+                    </select>
+                </div>
+                <button class="btn-apply" onclick="refreshData()">데이터 업데이트</button>
+            </div>
+        </div>
+
+        <!-- Middle Area: Google Trends -->
+        <div class="card">
+            <div class="card-title"
+                style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+                <div style="display: flex; align-items: center; gap: 8px;">
+                    실시간 유튜브 검색 트렌드 (Google Trends)
+                </div>
+                <div style="display: flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 500;">
+                    <span class="filter-label">비교 키워드 설정</span>
+                    <input type="text" id="trends-keywords" class="filter-select"
+                        style="width: 200px; padding: 10px 16px; background-image: none;" value="ETF, 연금투자"
+                        placeholder="검색어 (쉼표로 구분)">
+                </div>
+            </div>
+            <div class="trends-wrapper" id="trends-container">
+                <!-- Google Trends Widget or Local Fallback will be injected here -->
+                <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+                <script type="text/javascript">
+                    let mockChartInstance = null;
+
+                    function renderTrends(keywordsStr = "ETF, 연금투자", period = 15) {
+                        const container = document.getElementById('trends-container');
+
+                        // Parse keywords
+                        const keywords = keywordsStr.split(',').map(k => k.trim()).filter(k => k.length > 0);
+                        if (keywords.length === 0) keywords.push('주식'); // fallback
+
+                        // Determine time string for Google Trends
+                        let timeStr = "today 1-m";
+                        if (period == 7) timeStr = "now 7-d";
+                        else if (period == 30) timeStr = "today 1-m";
+                        // Google Trends doesn't have a standard '15-d' string, using 1-m as standard fallback for 15 days in this specific widget or we could use custom date range. Let's use 1-m to ensure it renders correctly.
+
+                        // Google Trends iframe prevents loading from 'file://' protocols due to security
+                        if (window.location.protocol === 'file:') {
+                            if (!document.getElementById('mockChart')) {
+                                container.innerHTML = `
+                                <div style="width: 100%; height: 100%; position: relative; padding: 24px; box-sizing: border-box;">
+                                    <div style="position: absolute; top: 12px; right: 24px; background: rgba(0,0,0,0.7); color: white; padding: 6px 12px; border-radius: 6px; font-size: 12px; font-weight: 600; z-index: 10;">
+                                        ⚠️ 로컬 환경(file://) 샘플 데이터 - 실제 웹 서버 구동 시 구글 트렌드가 연동됩니다.
+                                    </div>
+                                    <canvas id="mockChart"></canvas>
+                                </div>
+                            `;
+                            }
+
+                            const ctx = document.getElementById('mockChart').getContext('2d');
+
+                            // Generate mock data based on period
+                            let labels = [];
+                            if (period == 7) labels = ['6일 전', '5일 전', '4일 전', '3일 전', '그제', '어제', '오늘'];
+                            else if (period == 15) labels = ['14일 전', '12일 전', '10일 전', '8일 전', '6일 전', '4일 전', '2일 전', '오늘'];
+                            else labels = ['4주 전', '3주 전', '2주 전', '1주 전', '5일 전', '3일 전', '어제', '오늘'];
+
+                            const colors = [
+                                { border: '#3182f6', bg: 'rgba(49, 130, 246, 0.1)' },
+                                { border: '#191f28', bg: 'rgba(25, 31, 40, 0.05)' },
+                                { border: '#f04452', bg: 'rgba(240, 68, 82, 0.1)' },
+                                { border: '#04c09e', bg: 'rgba(4, 192, 158, 0.1)' },
+                                { border: '#ff9800', bg: 'rgba(255, 152, 0, 0.1)' }
+                            ];
+
+                            const datasets = keywords.slice(0, 5).map((kw, index) => {
+                                const data = Array.from({ length: labels.length }, () => Math.floor(Math.random() * 60) + 20 + (index * 5));
+                                // make the latest data point a bit higher to show "trend"
+                                data[data.length - 1] += 20;
+                                return {
+                                    label: kw + ' 검색 반응도',
+                                    data: data,
+                                    borderColor: colors[index % colors.length].border,
+                                    backgroundColor: colors[index % colors.length].bg,
+                                    borderWidth: 3,
+                                    tension: 0.4,
+                                    fill: true
+                                };
+                            });
+
+                            if (mockChartInstance) {
+                                mockChartInstance.destroy();
+                            }
+
+                            mockChartInstance = new Chart(ctx, {
+                                type: 'line',
+                                data: { labels: labels, datasets: datasets },
+                                options: {
+                                    responsive: true,
+                                    maintainAspectRatio: false,
+                                    animation: { duration: 800 },
+                                    plugins: {
+                                        legend: { position: 'bottom', labels: { font: { family: 'Pretendard', size: 13, weight: '600' } } }
+                                    },
+                                    scales: { y: { beginAtZero: true, max: 100 } }
+                                }
+                            });
+                        } else if (typeof trends !== 'undefined') {
+                            // Clear container for new widget
+                            container.innerHTML = '';
+
+                            const comparisonItems = keywords.slice(0, 5).map(kw => ({
+                                "keyword": kw,
+                                "geo": "KR",
+                                "time": timeStr
+                            }));
+
+                            const exploreQuery = `date=${encodeURIComponent(timeStr)}&geo=KR&gprop=youtube&q=${encodeURIComponent(keywords.slice(0, 5).join(','))}`;
+
+                            trends.embed.renderExploreWidgetTo(
+                                container,
+                                "TIMESERIES",
+                                {
+                                    "comparisonItem": comparisonItems,
+                                    "category": 0,
+                                    "property": "youtube"
+                                },
+                                {
+                                    "exploreQuery": exploreQuery,
+                                    "guestPath": "https://trends.google.co.kr:443/trends/embed/"
+                                }
+                            );
+                        }
+                    }
+
+                    window.addEventListener('load', () => renderTrends());
+                </script>
+            </div>
+        </div>
+
+        <!-- Bottom Area: Anti-gravity Engine Report -->
+        <div class="card">
+            <div class="card-title">
+                인기 콘텐츠 분석 리포트
+                <span class="engine-badge">Anti-gravity Engine Active</span>
+            </div>
+
+            <div class="tabs">
+                <button class="tab active" onclick="switchTab('longform', this)">동영상 (Long-form)</button>
+                <button class="tab" onclick="switchTab('shorts', this)">쇼츠 (Shorts)</button>
+            </div>
+
+            <div class="data-table-wrapper">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>콘텐츠 유형</th>
+                            <th>주요 내용 (3줄 요약)</th>
+                            <th>주요 키워드 및 특징</th>
+                            <th>대표 채널 예시</th>
+                        </tr>
+                    </thead>
+                    <tbody id="table-body">
+                        <!-- Data injected by JS -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Anti-gravity Engine Mock Data
+        const engineData = {
+            longform: [
+                {
+                    type: "글로벌 매크로 & 미주 투자",
+                    summary: "• 연준(Fed) 금리 동향 및 매크로 지표 리뷰<br>• 미국 빅테크(M7) 및 AI 반도체 사이클 전망<br>• 환율 변동성 체크 및 개인 투자자 대응 전략",
+                    keywords: ["#미국주식", "#AI반도체", "#엔비디아", "#금리동향"],
+                    features: "퇴근길이나 업무 중 라디오처럼 소비되어 체류시간이 우수하며, '카카오톡 공유' 등을 통한 직장인 간 정보 교류(Organic) 활발",
+                    channels: [
+                        { name: "삼프로TV_경제의신과함께", link: "https://www.youtube.com/@3protv" },
+                        { name: "슈카월드", link: "https://www.youtube.com/@syukaworld" }
+                    ]
+                },
+                {
+                    type: "자산배분 & 절세 전략",
+                    summary: "• ISA 계좌 개편안 완벽 정리 및 실전 세팅법<br>• 연금저축/IRP를 활용한 배당 ETF 모아가기 루틴<br>• 직장인 청년층 연말정산/세액공제 최대화 노하우",
+                    keywords: ["#ISA계좌", "#연금저축", "#배당ETF", "#SCHD"],
+                    features: "실제 적용을 위한 '저장하기(나중에 볼 동영상)' 비율이 높고 댓글 창에서 본인의 포트폴리오 상담을 요청하는 고관여 반응 다수",
+                    channels: [
+                        { name: "박곰희TV", link: "https://www.youtube.com/@parkgomhee" },
+                        { name: "월급쟁이부자들TV", link: "https://www.youtube.com/@weolbu" }
+                    ]
+                },
+                {
+                    type: "부동산 현장 & 청약",
+                    summary: "• 수도권 핵심 입지 및 1기 신도시 급매물 동향 점검<br>• 신생아 특례대출 등 정부 대출 규제 완화 활용 사례<br>• 무주택자 2030을 위한 가성비 청약 단지 분석",
+                    keywords: ["#부동산전망", "#내집마련", "#특례대출", "#임장"],
+                    features: "지역별 맘카페/직장인 커뮤니티로의 외부 링크 유출입이 강하며, 각 지역 거주자들의 팩트체크성 릴레이 토론이 특징",
+                    channels: [
+                        { name: "부동산 읽어주는 남자", link: "https://www.youtube.com/@booreadnam" },
+                        { name: "표영호TV", link: "https://www.youtube.com/@pyoyounghotv" }
+                    ]
+                }
+            ],
+            shorts: [
+                {
+                    type: "핵심 뉴스/이슈 요약",
+                    summary: "• 금투세 논란, 비트코인 현물 ETF 등 복잡한 이슈 해설<br>• 팩트 기반의 모션그래픽 활용 글로벌 경제 동향 요약<br>• 60초 내에 결론을 제시하는 두괄식 브리핑",
+                    keywords: ["#1분상식", "#경제이슈", "#뉴스요약", "#팩트체크"],
+                    features: "알고리즘 노출 빈도가 가장 높으며, 인스타그램 릴스 등 타 플랫폼 타겟층으로 확장 공유되는 바이럴 효과 극대화",
+                    channels: [
+                        { name: "14F 일사에프", link: "https://www.youtube.com/@14F" },
+                        { name: "슈카월드 코믹스", link: "https://www.youtube.com/@syukaworld_comics" }
+                    ]
+                },
+                {
+                    type: "극강 짠테크 & 지원금",
+                    summary: "• 정부/지자체 숨은 청년 지원금 1분 신청 방법<br>• 직장인 한 달 100만 원 저축하는 기적의 루틴 공개<br>• 영수증 리뷰, 걷기 앱 등 수익 인증 앱테크 모음",
+                    keywords: ["#짠테크", "#청년지원금", "#앱테크", "#돈모으기"],
+                    features: "'이거 너 신청했어?' 식의 지인 멘션 및 DM 공유가 폭발하며 2030 세대의 실질적 Action을 유도하는 훅(Hook) 강력",
+                    channels: [
+                        { name: "김짠부의 재테크", link: "https://www.youtube.com/@kimjjanbu" },
+                        { name: "돈립만세", link: "https://www.youtube.com/@donliplib" }
+                    ]
+                }
+            ]
+        };
+
+        function renderTable(type) {
+            const tbody = document.getElementById('table-body');
+            tbody.innerHTML = '';
+
+            const data = engineData[type];
+
+            data.forEach(row => {
+                const tr = document.createElement('tr');
+
+                // Format keywords
+                const keywordsHtml = row.keywords.map(kw => `<span class="keyword-tag">${kw}</span>`).join('');
+
+                // Format channels
+                const channelsHtml = row.channels.map(ch =>
+                    `<a href="${ch.link}" target="_blank" class="channel-link">${ch.name}</a><br>`
+                ).join('');
+
+                tr.innerHTML = `
+                <td class="col-type">${row.type}</td>
+                <td class="col-summary">${row.summary}</td>
+                <td class="col-keywords">
+                    <div style="margin-bottom: 12px;">${keywordsHtml}</div>
+                    <div style="font-size: 13.5px; color: #4e5968;"><strong>[특징]</strong> ${row.features}</div>
+                </td>
+                <td class="col-channel">${channelsHtml}</td>
+            `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function switchTab(type, element) {
+            // Update active class on tabs
+            document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+            element.classList.add('active');
+
+            // Render data
+            renderTable(type);
+        }
+
+        function refreshData() {
+            const btn = document.querySelector('.btn-apply');
+            const originalText = btn.innerText;
+            btn.innerText = '엔진 데이터 수집 중...';
+            btn.style.opacity = '0.7';
+
+            // Refresh Trends Chart
+            const keywordsStr = document.getElementById('trends-keywords').value;
+            const period = document.getElementById('filter-period').value;
+            renderTrends(keywordsStr, period);
+
+            setTimeout(() => {
+                btn.innerText = originalText;
+                btn.style.opacity = '1';
+                alert('Anti-gravity 엔진 최신 데이터 동기화가 완료되었습니다.');
+                // Here you would normally update the table data based on the new filters
+            }, 800);
+        }
+
+        // Initialize with Long-form data
+        window.onload = () => {
+            renderTable('longform');
+        };
+    </script>
+
+</body>
+
+</html>
